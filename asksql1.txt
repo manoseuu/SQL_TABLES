@@ -1,0 +1,39 @@
+CREATE TABLE MEMBERS (
+    CardNo CHAR(5) PRIMARY KEY,
+    Surname VARCHAR(15) NOT NULL,
+    Name VARCHAR(15) NOT NULL,
+    Address VARCHAR(150),
+    Birthday_date DATE NOT NULL,
+    Gender CHAR(1) CHECK (Gender IN ('M', 'F')),
+    Phone_No VARCHAR(15)
+);
+CREATE TABLE Employees (
+    emp_id INT IDENTITY(1,1) PRIMARY KEY,
+    Surname VARCHAR(15) NOT NULL,
+    Name VARCHAR(15) NOT NULL,
+    Birthday_date DATE NOT NULL,
+    Emp_Date DATE NOT NULL CHECK (Emp_Date >= Birthday_date)
+);
+CREATE TABLE Publishers (
+    pub_id INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    City VARCHAR(50) NOT NULL,
+    Phone_No VARCHAR(15)
+);
+CREATE TABLE Books (
+    BookID CHAR(5) PRIMARY KEY,
+    Pub_ID INT FOREIGN KEY REFERENCES Publishers(pub_id),
+    Type VARCHAR(50) CHECK (Type IN ('novel', 'historical', 'for kids', 'poems', 'crime story', 'science fiction', 'science')),
+    Price MONEY NOT NULL,
+    Title VARCHAR(40) NOT NULL
+);
+CREATE TABLE BOOK_LOANS (
+    LoanID INT IDENTITY(1,1) PRIMARY KEY,
+    CardNo CHAR(5) FOREIGN KEY REFERENCES MEMBERS(CardNo),
+    BookID CHAR(5) FOREIGN KEY REFERENCES Books(BookID),
+    emp_id INT FOREIGN KEY REFERENCES Employees(emp_id),
+    DateOut DATE,
+    DueDate DATE,
+    Penalty MONEY DEFAULT 0 CHECK (Penalty >= 0),
+    CONSTRAINT CHK_DateOutBeforeDueDate CHECK (DateOut < DueDate)
+);
